@@ -66,7 +66,7 @@ exports.handler = async function (event: APIGatewayEvent, context: Context) {
   console.log({ channelId, event });
 
   if (channelId) {
-    publishMessage(channelId, "Hello world :tada:");
+    publishMessage(channelId, "Hello again! :tada:");
   }
 
   console.log("⚡️ Bolt app is running!");
