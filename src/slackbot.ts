@@ -39,4 +39,9 @@ export async function handler(event: APIGatewayEvent, context: Context) {
       body: payload.challenge,
     };
   }
+
+  return {
+    statusCode: 200,
+    body: "",
+  };
 }
