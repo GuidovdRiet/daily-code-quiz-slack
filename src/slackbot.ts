@@ -3,6 +3,10 @@ import { APIGatewayEvent, Context } from "aws-lambda";
 import * as dotenv from "dotenv";
 dotenv.config();
 
+const tomorrow = new Date();
+tomorrow.setDate(tomorrow.getDate() + 1);
+tomorrow.setHours(9, 0, 0);
+
 const expressReceiver = new ExpressReceiver({
   signingSecret: `${process.env.SLACK_SIGNING_SECRET}`,
   processBeforeResponse: true,
@@ -46,11 +50,12 @@ async function publishMessage(id: string, text: string) {
 
   try {
     // Call the chat.postMessage method using the built-in WebClient
-    const result = await app.client.chat.postMessage({
+    const result = await app.client.chat.scheduleMessage({
       // The token you used to initialize your app
-      token: `${process.env.SLACK_BOT_TOKEN}`,
       channel: id,
+      token: `${process.env.SLACK_BOT_TOKEN}`,
       text: text,
+      post_at: tomorrow.getTime() / 1000,
       // You could also use a blocks[] array to send richer content
     });
 
