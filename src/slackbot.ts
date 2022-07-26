@@ -14,45 +14,31 @@ const app = new App({
   receiver: expressReceiver,
 });
 
-app.message(async ({ say }) => {
-  await say("Hi :wave:");
-});
-
-function parseRequestBody(stringBody: string | null) {
+// Find conversation ID using the conversations.list method
+async function findConversation(name: string) {
   try {
-    return JSON.parse(stringBody ?? "");
-  } catch {
-    return undefined;
+    // Call the conversations.list method using the built-in WebClient
+    const result = await app.client.conversations.list({
+      // The token you used to initialize your app
+      token: `${process.env.SLACK_BOT_TOKEN}`,
+    });
+
+    if (result.channels) {
+      for (const channel of result.channels) {
+        if (channel.name === name) {
+          const conversationId = channel.id;
+
+          // Print result
+          console.log("Found conversation ID: " + conversationId);
+          // Break from for loop
+          break;
+        }
+      }
+    }
+  } catch (error) {
+    console.error(error);
   }
 }
 
-export async function handler(event: APIGatewayEvent, context: Context) {
-  const payload = parseRequestBody(event.body);
-
-  if (payload && payload.type && payload.type === "url_verification") {
-    return {
-      statusCode: 200,
-      body: payload.challenge,
-    };
-  }
-
-  const slackEvent: ReceiverEvent = {
-    body: payload,
-    ack: async (response) => {
-      return new Promise<void>((resolve, reject) => {
-        resolve();
-        return {
-          statusCode: 200,
-          body: response ?? "",
-        };
-      });
-    },
-  };
-
-  await app.processEvent(slackEvent);
-
-  return {
-    statusCode: 200,
-    body: "",
-  };
-}
+// Find conversation with a specified channel `name`
+findConversation("tester-channel");
