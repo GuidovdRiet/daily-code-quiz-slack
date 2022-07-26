@@ -30,8 +30,7 @@ async function findConversation(name: string) {
 
           // Print result
           console.log("Found conversation ID: " + conversationId);
-          // Break from for loop
-          break;
+          return conversationId;
         }
       }
     }
@@ -40,5 +39,38 @@ async function findConversation(name: string) {
   }
 }
 
-// Find conversation with a specified channel `name`
-findConversation("tester-channel");
+async function publishMessage(id: string, text: string) {
+  console.log({ id });
+
+  try {
+    // Call the chat.postMessage method using the built-in WebClient
+    const result = await app.client.chat.postMessage({
+      // The token you used to initialize your app
+      token: `${process.env.SLACK_BOT_TOKEN}`,
+      channel: id,
+      text: text,
+      // You could also use a blocks[] array to send richer content
+    });
+
+    // Print result, which includes information about the message (like TS)
+    console.log(result);
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+exports.handler = async function (event: APIGatewayEvent, context: Context) {
+  const channelId = await findConversation("tester-channel");
+  console.log({ channelId, event });
+
+  if (channelId) {
+    publishMessage(channelId, "Hello world :tada:");
+  }
+
+  console.log("⚡️ Bolt app is running!");
+
+  return {
+    statusCode: 200,
+    body: "",
+  };
+};
