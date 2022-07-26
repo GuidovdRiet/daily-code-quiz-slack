@@ -23,6 +23,8 @@ async function findConversation(name: string) {
       token: `${process.env.SLACK_BOT_TOKEN}`,
     });
 
+    console.log({ result });
+
     if (result.channels) {
       for (const channel of result.channels) {
         if (channel.name === name) {
@@ -60,7 +62,7 @@ async function publishMessage(id: string, text: string) {
 }
 
 exports.handler = async function (event: APIGatewayEvent, context: Context) {
-  const channelId = await findConversation("tester-channel");
+  const channelId = await findConversation("slack-bot-test");
   console.log({ channelId, event });
 
   if (channelId) {
