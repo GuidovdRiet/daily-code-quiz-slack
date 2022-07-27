@@ -43,15 +43,13 @@ async function findConversation(name: string) {
 async function publishMessage(id: string, text: string) {
   try {
     // Call the chat.postMessage method using the built-in WebClient
-    const result = await app.client.chat.postMessage({
-      // The token you used to initialize your app
+    await app.client.chat.postMessage({
+      // The token you used to initialize the app
       token: `${process.env.SLACK_BOT_TOKEN}`,
       channel: id,
       text: text,
-      // You could also use a blocks[] array to send richer content
+      // TODO: Send blocks array for richer content
     });
-
-    // Print result, which includes information about the message (like TS)
   } catch (error) {
     console.error(error);
   }
@@ -62,7 +60,7 @@ exports.handler = async function (event: APIGatewayEvent, context: Context) {
   const data = await getQuestions(db);
   const randomQuestion = data[Math.floor(Math.random() * data.length)];
 
-  if (channelId) {
+  if (channelId && data && randomQuestion) {
     publishMessage(channelId, `${randomQuestion.title} :tada:`);
   }
 
