@@ -58,9 +58,9 @@ async function publishMessage(id: string, text: string) {
 exports.handler = async function (event: APIGatewayEvent, context: Context) {
   const channelId = await findConversation("slack-bot-test");
   const data = await getQuestions(db);
-  const randomQuestion = data[Math.floor(Math.random() * data.length)];
 
-  if (channelId && data && randomQuestion) {
+  if (channelId && data) {
+    const randomQuestion = data[Math.floor(Math.random() * data.length)];
     publishMessage(channelId, `${randomQuestion.title} :tada:`);
   }
 
@@ -68,6 +68,5 @@ exports.handler = async function (event: APIGatewayEvent, context: Context) {
 
   return {
     statusCode: 200,
-    body: "",
   };
 };
