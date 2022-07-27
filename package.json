@@ -16,6 +16,7 @@
   "author": "Guido van de Riet",
   "license": "ISC",
   "dependencies": {
-    "@netlify/functions": "^1.0.0"
+    "@netlify/functions": "^1.0.0",
+    "firebase": "^9.9.1"
   }
 }

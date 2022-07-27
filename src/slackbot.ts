@@ -1,9 +1,8 @@
 import { App, ExpressReceiver, ReceiverEvent } from "@slack/bolt";
 import { APIGatewayEvent, Context } from "aws-lambda";
 import * as dotenv from "dotenv";
+import { db, getQuestions } from "./firebase";
 dotenv.config();
-// [functions.slackbot]
-//   schedule = "* * * * *"
 
 const expressReceiver = new ExpressReceiver({
   signingSecret: `${process.env.SLACK_SIGNING_SECRET}`,
@@ -25,8 +24,6 @@ async function findConversation(name: string) {
       token: `${process.env.SLACK_BOT_TOKEN}`,
     });
 
-    console.log({ result });
-
     if (result.channels) {
       for (const channel of result.channels) {
         if (channel.name === name) {
@@ -44,8 +41,6 @@ async function findConversation(name: string) {
 }
 
 async function publishMessage(id: string, text: string) {
-  console.log({ id });
-
   try {
     // Call the chat.postMessage method using the built-in WebClient
     const result = await app.client.chat.postMessage({
@@ -57,7 +52,6 @@ async function publishMessage(id: string, text: string) {
     });
 
     // Print result, which includes information about the message (like TS)
-    console.log(result);
   } catch (error) {
     console.error(error);
   }
@@ -65,10 +59,11 @@ async function publishMessage(id: string, text: string) {
 
 exports.handler = async function (event: APIGatewayEvent, context: Context) {
   const channelId = await findConversation("slack-bot-test");
-  console.log({ channelId, event });
+  const data = await getQuestions(db);
+  const randomQuestion = data[Math.floor(Math.random() * data.length)];
 
   if (channelId) {
-    publishMessage(channelId, "Hello again! :tada:");
+    publishMessage(channelId, `${randomQuestion.title} :tada:`);
   }
 
   console.log("⚡️ Bolt app is running!");
