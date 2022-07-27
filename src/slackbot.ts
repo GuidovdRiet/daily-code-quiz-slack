@@ -1,5 +1,6 @@
 import { App, ExpressReceiver, ReceiverEvent } from "@slack/bolt";
 import { APIGatewayEvent, Context } from "aws-lambda";
+import { schedule } from "@netlify/functions";
 import * as dotenv from "dotenv";
 dotenv.config();
 
@@ -61,7 +62,7 @@ async function publishMessage(id: string, text: string) {
   }
 }
 
-exports.handler = async function (event: APIGatewayEvent, context: Context) {
+const handlerFn = async function (event: APIGatewayEvent, context: Context) {
   const channelId = await findConversation("slack-bot-test");
   console.log({ channelId, event });
 
@@ -76,3 +77,5 @@ exports.handler = async function (event: APIGatewayEvent, context: Context) {
     body: "",
   };
 };
+
+export const handler = schedule("* * * * *", handlerFn);
