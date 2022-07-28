@@ -60,7 +60,9 @@ exports.handler = async function (event: APIGatewayEvent, context: Context) {
   const data = await getQuestions(db);
 
   if (channelId && data) {
+    console.log({ channelId, data });
     const randomQuestion = data[Math.floor(Math.random() * data.length)];
+    console.log({ randomQuestion });
     publishMessage(channelId, `${randomQuestion.title} :tada:`);
   }
 
