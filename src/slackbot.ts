@@ -43,13 +43,15 @@ async function findConversation(name: string) {
 async function publishMessage(id: string, text: string) {
   try {
     // Call the chat.postMessage method using the built-in WebClient
-    await app.client.chat.postMessage({
+    const request = await app.client.chat.postMessage({
       // The token you used to initialize the app
       token: `${process.env.SLACK_BOT_TOKEN}`,
       channel: id,
       text: text,
       // TODO: Send blocks array for richer content
     });
+
+    console.log({ request });
   } catch (error) {
     console.error(error);
   }
